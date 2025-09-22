@@ -17,6 +17,7 @@ traderRouter.get('/get-farmers',authMiddleware, getFarmers);
 traderRouter.delete('/deleteGrade/:gradeId',authMiddleware, deleteGrade)
 traderRouter.patch('/updateGradebyId/:gradeId',authMiddleware, updateGradebyId)
 traderRouter.post('/addProduct/:id',authMiddleware, addProduct)
+// traderRouter.post('/addProduct/:id', addProduct)
 traderRouter.post('/addVehicle',authMiddleware, addVehicle)
 traderRouter.post('/logout', logout)
 

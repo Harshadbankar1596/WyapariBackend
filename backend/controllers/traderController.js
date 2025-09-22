@@ -96,10 +96,10 @@ const loginTrader = async (req, res) => {
       return res.status(403).json({ message: "Oops! You have been blocked by the admin" });
     }
 
-    const isOtpCorrect = await Otp.findOne({ contact, otp });
-    if (!isOtpCorrect) {
-      return res.status(403).json({ message: "Invalid OTP" });
-    }
+    // const isOtpCorrect = await Otp.findOne({ contact, otp });
+    // if (!isOtpCorrect) {
+    //   return res.status(403).json({ message: "Invalid OTP" });
+    // }
 
     await Otp.deleteOne({ contact });
 
@@ -251,11 +251,16 @@ const updateGradebyId = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 }
+
+
+
+
 const addProduct = async (req, res) => {
 
   try {
     
     const trader = req.trader;
+    console.log("trader : " ,trader)
     const { id } = req.params;
     const products = Array.isArray(req.body) ? req.body : [req.body];
 
@@ -305,11 +310,11 @@ const addProduct = async (req, res) => {
         });
       }
 
-      if (traderName !== trader.traderName) {
-        return res.status(403).json({ message: "Trader Name is not valid" });
-      }
+      // if (traderName !== trader.traderName) {
+      //   return res.status(403).json({ message: "Trader Name is not valid" });
+      // }
 
-      // const farmerFound = await Farmer.findOne({ farmerContact, farmerName });
+      // const farmerFound = await Farmer.findOne({ farmerContact, farmerName }); //or de nantar garajpadlitar farmerContact || farmerName
       // if (!farmerFound) {
       //   return res.status(403).json({ message: "Farmer not found or invalid details" });
       // }
@@ -326,7 +331,6 @@ const addProduct = async (req, res) => {
         quantity,
         deliveryWay,
         paymentStatus,
-        farmerId: farmerFound._id,
         traderId: trader._id,
       });
 
@@ -340,9 +344,11 @@ const addProduct = async (req, res) => {
     });
 
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 };
+
 const logout = async (req, res) => {
   try {
     res.clearCookie("token");

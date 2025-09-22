@@ -46,10 +46,6 @@ const productSchema = new mongoose.Schema({
         enum: ["paid", "unpaid"],
         lowercase: true,
     },
-    farmerId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Farmer'
-    },
     traderId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Trader'
