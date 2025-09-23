@@ -142,7 +142,6 @@ const updateProfile = async (req, res) => {
             farmerContact,
             farmerAddress,
             farmerArea,
-            farmerEmail,
             farmerProfileImage
         }, { new: true })
 
