@@ -286,6 +286,7 @@ const addProduct = async (req, res) => {
         priceWithoutGrade,
         totalPrice,
         quantity,
+        weight,
         farmerContact,
         paymentStatus,
         deliveryWay
@@ -329,6 +330,7 @@ const addProduct = async (req, res) => {
         priceWithoutGrade,
         totalPrice,
         quantity,
+        weight,
         deliveryWay,
         paymentStatus,
         traderId: trader._id,

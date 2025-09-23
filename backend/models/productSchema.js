@@ -34,6 +34,9 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    weight : {
+        type: String,
+    },
     deliveryWay: {
         type: String,
         required: true,
