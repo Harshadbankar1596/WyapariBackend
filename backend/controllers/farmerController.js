@@ -106,9 +106,8 @@ const loginFarmer = async (req, res) => {
         if (farmer.isActive === false) {
             return res.status(200).json({ message: "Oops ! you have been blocked by the admin" });
         }
-        const token = await jwt.sign({ _id: farmer._id }, process.env.JWT_SECRET);
+        const token =  jwt.sign({ _id: farmer._id }, process.env.JWT_SECRET);
 
-        // console.log("token", token)
         farmer.farmerPassword = undefined;
         res.cookie("token", token, {
             httpOnly: true,
@@ -122,13 +121,16 @@ const loginFarmer = async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 }
+
+
+
 const updateProfile = async (req, res) => {
     try {
         const farmer = req.farmer;
         if (!farmer) {
             return res.status(400).json({ message: "Farmer not valid" })
         }
-        const { farmerAddress, farmerArea, farmerContact, farmerEmail } = req.body;
+        const { farmerAddress, farmerArea, farmerContact } = req.body;
         // console.log("farmer from update", farmer)
         let farmerProfileImage = null;
         if (req.file) {
@@ -151,6 +153,8 @@ const updateProfile = async (req, res) => {
 
     }
 }
+
+
 const changePassword = async (req, res) => {
     try {
         const { newPassword } = req.body;
@@ -203,4 +207,4 @@ const logout = async (req, res) => {
     }
 }
 
-module.exports = { registerFarmer, sendOtp, loginFarmer, getTraders, updateProfile, changePassword, logout };
+module.exports = { registerFarmer, sendOtp, loginFarmer, getTraders, updateProfile, changePassword, logout }
