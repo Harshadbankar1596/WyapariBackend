@@ -1,6 +1,6 @@
 const express = require('express');
 const upload = require('../middlewares/multer');
-const { postGrade, registerTrader, loginTrader, getGrates, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, sendOtp, getFarmers } = require('../controllers/traderController');
+const { postGrade, registerTrader, loginTrader, getGrates, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, sendOtp, getFarmers, GetProducts , GetProductsById} = require('../controllers/traderController');
 const { authMiddleware } = require('../middlewares/auth');
 
 const traderRouter = express.Router();
@@ -13,6 +13,8 @@ traderRouter.post('/login', loginTrader);
 traderRouter.patch('/updateTrader',authMiddleware, upload.single("traderProfileImage"), updateTrader);
 traderRouter.patch('/changeTraderPassword',authMiddleware, changeTraderPassword);
 traderRouter.get('/get-farmers',authMiddleware, getFarmers);
+traderRouter.get('/getProducts' , authMiddleware , GetProducts)
+traderRouter.get('/getProducts/:id',authMiddleware, GetProductsById)
 
 traderRouter.delete('/deleteGrade/:gradeId',authMiddleware, deleteGrade)
 traderRouter.patch('/updateGradebyId/:gradeId',authMiddleware, updateGradebyId)

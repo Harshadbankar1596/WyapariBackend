@@ -377,5 +377,41 @@ const addVehicle = async (req, res) => {
   }
 }
 
+const GetProducts = async (req, res) => {
+  try {
+    const trader = req.trader;
 
-module.exports = { registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
+    if (!trader) {
+      return res.status(400).json({ message: "Trader invalid" })
+    }
+    
+    const products = await Product.find();
+    res.status(200).json({ message: "Products fetched successfully", data: products });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message });
+  }
+}
+
+const GetProductsById = async (req, res) => {
+  try {
+    const trader = req.trader;
+    const { id } = req.params;
+    if (!trader) {
+      return res.status(400).json({ message: "Trader invalid" })
+    }
+    if (!id) {
+      return res.status(400).json({ message: "Product id is required" })
+    }
+    const products = await Product.find({ traderId: id });
+    res.status(200).json({ message: "Products fetched successfully", data: products });
+
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: error.message });
+  }
+}
+
+
+module.exports = {GetProductsById , GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
