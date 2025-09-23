@@ -413,5 +413,35 @@ const GetProductsById = async (req, res) => {
   }
 }
 
+const deleteProduct = async (req, res) => {
+  try {
 
-module.exports = {GetProductsById , GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
+    const trader = req.trader;
+    const { id } = req.params;
+
+    if (!trader) {
+      return res.status(400).json({ message: "Trader invalid" })
+    }
+    if (!id) {
+      return res.status(400).json({ message: "Product id is required" })
+    }
+
+    const product = await Product.findById(id);
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    if (product.traderId.toString() !== trader._id.toString()) {
+      return res.status(403).json({ message: "You are not authorized to delete this product" });
+    }
+
+    await Product.findByIdAndDelete(id);
+    res.status(200).json({ message: "Product deleted successfully" });
+    
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+
+module.exports = { deleteProduct , GetProductsById , GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
