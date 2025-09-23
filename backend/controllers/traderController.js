@@ -56,14 +56,14 @@ const registerTrader = async (req, res) => {
     await trader.save();
     res.status(201).json({ message: "Trader registered successfully", data: trader });
   } catch (error) {
-    console.error("Error in registerTrader:", error);
+    // console.error("Error in registerTrader:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
 const sendOtp = async (req, res) => {
   try {
     const { contact } = req.body;
-    console.log("contact", contact);
+    // console.log("contact", contact);
     // const otp = String(Math.floor(100000 + Math.random() * 900000));
     const otp = 123456
     await Otp.findOneAndUpdate(
@@ -79,7 +79,7 @@ const sendOtp = async (req, res) => {
     // })
     res.status(200).json({ message: `Otp - ${otp}` })
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     res.status(500).json({ error: error.message })
   }
 }
@@ -121,7 +121,7 @@ const loginTrader = async (req, res) => {
       });
 
   } catch (error) {
-    console.error("Error in loginTrader:", error);
+    // console.error("Error in loginTrader:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
@@ -193,7 +193,7 @@ const deleteGrade = async (req, res) => {
   try {
     const { gradeId } = req.params;
     const trader = req.trader;
-    console.log("trader", trader)
+    // console.log("trader", trader)
 
     if (!gradeId) {
       return res.status(400).json({ message: "Grade id is required" });
@@ -223,7 +223,7 @@ const updateGradebyId = async (req, res) => {
       return res.status(400).json({ message: "Grade id is required" })
     }
     const gradeFound = trader.grades.id(gradeId);
-    console.log("Grade Found", gradeFound);
+    // console.log("Grade Found", gradeFound);
     if (!gradeFound) {
       return res.status(403).json({ message: "Grade id is not valid" })
     }
@@ -236,7 +236,7 @@ const updateGradebyId = async (req, res) => {
       return res.status(400).json({ message: "Grade already exists" });
     }
 
-    console.log(gradeAlreadyExists);
+    // console.log(gradeAlreadyExists);
     if (grade) gradeFound.grade = grade
     if (price) gradeFound.price = price
 
@@ -260,7 +260,7 @@ const addProduct = async (req, res) => {
   try {
     
     const trader = req.trader;
-    console.log("trader : " ,trader)
+    // console.log("trader : " ,trader)
     const { id } = req.params;
     const products = Array.isArray(req.body) ? req.body : [req.body];
 
@@ -344,7 +344,7 @@ const addProduct = async (req, res) => {
     });
 
   } catch (error) {
-    console.log(error)
+    // console.log(error)
     res.status(500).json({ error: error.message });
   }
 };

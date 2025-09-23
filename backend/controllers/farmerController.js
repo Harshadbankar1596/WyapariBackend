@@ -26,7 +26,7 @@ const registerFarmer = async (req, res) => {
 
         const farmerExistInAnotherSchema = await Trader.findOne({ traderContact: farmerContact });
         if (farmerExistInAnotherSchema) {
-            console.log("farmerExistInAnotherSchema", farmerExistInAnotherSchema)
+            // console.log("farmerExistInAnotherSchema", farmerExistInAnotherSchema)
             return res.status(400).json({ message: "User already registered as a trader!" });
         }
 
@@ -108,7 +108,7 @@ const loginFarmer = async (req, res) => {
         }
         const token = await jwt.sign({ _id: farmer._id }, process.env.JWT_SECRET);
 
-        console.log("token", token)
+        // console.log("token", token)
         farmer.farmerPassword = undefined;
         res.cookie("token", token, {
             httpOnly: true,
@@ -129,7 +129,7 @@ const updateProfile = async (req, res) => {
             return res.status(400).json({ message: "Farmer not valid" })
         }
         const { farmerAddress, farmerArea, farmerContact, farmerEmail } = req.body;
-        console.log("farmer from update", farmer)
+        // console.log("farmer from update", farmer)
         let farmerProfileImage = null;
         if (req.file) {
             const uploadResult = await uploadTheImage(req.file.path);
@@ -180,9 +180,9 @@ const changePassword = async (req, res) => {
 const getTraders = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("farmer id", id)
+        // console.log("farmer id", id)
         const farmer = req.farmer;
-        console.log("farmer from controller", farmer)
+        // console.log("farmer from controller", farmer)
         if (id !== farmer._id.toString()) {
             return res.status(403).json({ message: "Farmer is not valid" })
         }

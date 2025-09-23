@@ -6,14 +6,14 @@ const Admin = require('../models/adminSchema');
 const authMiddleware = async (req, res, next) => {
   try {
     const { token } = req.cookies;
-    console.log("token", token);
+    // console.log("token", token);
 
     if (!token) {
       return res.status(401).json({ message: "No token, authorization denied" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("decoded", decoded);
+    // console.log("decoded", decoded);
     const { _id } = decoded;
 
     // Check trader
@@ -29,7 +29,7 @@ const authMiddleware = async (req, res, next) => {
       return next();
     }
     const admin = await Admin.findById(_id);
-    console.log("Admin from middleware", admin)
+    // console.log("Admin from middleware", admin)
     if (admin) {
       req.admin = admin;
       return next();
