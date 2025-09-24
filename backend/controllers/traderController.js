@@ -253,27 +253,139 @@ const updateGradebyId = async (req, res) => {
 
 
 
+// const addProduct = async (req, res) => {
+
+//   try {
+
+//     const trader = req.trader;
+//     // console.log("trader : " ,trader)
+//     const { id } = req.params;
+//     const products = Array.isArray(req.body) ? req.body : [req.body];
+//     console.log("Body => ", req.body)
+//     console.log("File => ", req.file)
+//     let Vehiclephoto = null;
+
+//     const v = req.body.deliveryWay 
+
+//     if ( v === "delivered" && req.file) {
+//       const uploadResult = await uploadTheImage(req.file.path);
+//       Vehiclephoto = uploadResult?.secure_url;
+//       fs.unlinkSync(req.file.path);
+//     }
+
+
+//     if (!id) {
+//       return res.status(403).json({ message: "Trader id is required" });
+//     }
+//     if (!trader) {
+//       return res.status(402).json({ message: "Trader not found" });
+//     }
+//     if (id !== trader._id.toString()) {
+//       return res.status(403).json({ message: "Trader id is not valid" });
+//     }
+
+ 
+
+//     let savedProducts = [];
+
+//     for (const productData of products) {
+//       const {
+//         productName,
+//         farmerName,
+//         traderName,
+//         grade,
+//         gradePrice,
+//         priceWithoutGrade,
+//         totalPrice,
+//         quantity,
+//         weight,
+//         BillType,
+//         vehicleName,
+//         vehicleNumber,
+//         farmerContact,
+//         paymentStatus,
+//         deliveryWay
+//       } = productData;
+
+
+//       if (
+//         !productName ||
+//         !farmerName ||
+//         !farmerContact ||
+//         !traderName ||
+//         (!grade && !priceWithoutGrade) ||
+//         (grade && !gradePrice) ||
+//         !totalPrice ||
+//         !quantity ||
+//         !BillType ||
+//         (v === "delivered" && !vehicleName) ||
+//         (v === "delivered" && !vehicleNumber) ||
+//         !deliveryWay ||
+//         !paymentStatus
+//       ) {
+//         return res.status(400).json({
+//           message: "All required fields must be filled properly",
+//           invalidProduct: productData,
+//         });
+//       }
+
+//       // if (traderName !== trader.traderName) {
+//       //   return res.status(403).json({ message: "Trader Name is not valid" });
+//       // }
+
+//       // const farmerFound = await Farmer.findOne({ farmerContact, farmerName }); //or de nantar garajpadlitar farmerContact || farmerName
+//       // if (!farmerFound) {
+//       //   return res.status(403).json({ message: "Farmer not found or invalid details" });
+//       // }
+
+//       const product = new Product({
+//         productName,
+//         farmerName,
+//         farmerContact,
+//         traderName,
+//         grade,
+//         gradePrice,
+//         priceWithoutGrade,
+//         totalPrice,
+//         quantity,
+//         weight,
+//         BillType,
+//         vehicleName,
+//         vehicleNumber,
+//         vehiclePhoto: Vehiclephoto,
+//         deliveryWay,
+//         paymentStatus,
+//         traderId: trader._id,
+//       });
+
+//       const addedProduct = await product.save();
+//       savedProducts.push(addedProduct);
+//     }
+
+//     res.status(200).json({
+//       message: `${savedProducts.length} product(s) added successfully`,
+//       data: savedProducts,
+//     });
+
+//   } catch (error) {
+//     // console.log(error)
+//     res.status(500).json({ error: error.message });
+//   }
+// };
+
 const addProduct = async (req, res) => {
-
   try {
-
     const trader = req.trader;
-    // console.log("trader : " ,trader)
     const { id } = req.params;
     const products = Array.isArray(req.body) ? req.body : [req.body];
-    console.log("Body => ", req.body)
-    console.log("File => ", req.file)
     let Vehiclephoto = null;
 
-    const v = req.body.deliveryWay 
 
-    if ( v === "delivered" && req.file) {
-      const uploadResult = await uploadTheImage(req.file.path);
-      Vehiclephoto = uploadResult?.secure_url;
-      fs.unlinkSync(req.file.path);
-    }
+    console.log("Body Way : ", req.body)
+    console.log("File Way : ", req.file)
 
 
+    // trader & id check
     if (!id) {
       return res.status(403).json({ message: "Trader id is required" });
     }
@@ -283,8 +395,6 @@ const addProduct = async (req, res) => {
     if (id !== trader._id.toString()) {
       return res.status(403).json({ message: "Trader id is not valid" });
     }
-
- 
 
     let savedProducts = [];
 
@@ -304,10 +414,17 @@ const addProduct = async (req, res) => {
         vehicleNumber,
         farmerContact,
         paymentStatus,
-        deliveryWay
+        deliveryWay,
       } = productData;
 
+      // 🔹 Condition: Agar deliveryWay "delivered" hai to hi req.file upload karo
+      if (deliveryWay === "delivered" && req.file) {
+        const uploadResult = await uploadTheImage(req.file.path);
+        Vehiclephoto = uploadResult?.secure_url;
+        fs.unlinkSync(req.file.path);
+      }
 
+      // 🔹 Required fields check
       if (
         !productName ||
         !farmerName ||
@@ -318,25 +435,17 @@ const addProduct = async (req, res) => {
         !totalPrice ||
         !quantity ||
         !BillType ||
-        (v === "delivered" && !vehicleName) ||
-        (v === "delivered" && !vehicleNumber) ||
         !deliveryWay ||
-        !paymentStatus
+        !paymentStatus ||
+        // ✅ Only check vehicleName & vehicleNumber if deliveryWay == "delivered"
+        (deliveryWay === "delivered" && !vehicleName) ||
+        (deliveryWay === "delivered" && !vehicleNumber)
       ) {
         return res.status(400).json({
           message: "All required fields must be filled properly",
           invalidProduct: productData,
         });
       }
-
-      // if (traderName !== trader.traderName) {
-      //   return res.status(403).json({ message: "Trader Name is not valid" });
-      // }
-
-      // const farmerFound = await Farmer.findOne({ farmerContact, farmerName }); //or de nantar garajpadlitar farmerContact || farmerName
-      // if (!farmerFound) {
-      //   return res.status(403).json({ message: "Farmer not found or invalid details" });
-      // }
 
       const product = new Product({
         productName,
@@ -350,8 +459,8 @@ const addProduct = async (req, res) => {
         quantity,
         weight,
         BillType,
-        vehicleName,
-        vehicleNumber,
+        vehicleName: deliveryWay === "delivered" ? vehicleName : null,
+        vehicleNumber: deliveryWay === "delivered" ? vehicleNumber : null,
         vehiclePhoto: Vehiclephoto,
         deliveryWay,
         paymentStatus,
@@ -366,12 +475,11 @@ const addProduct = async (req, res) => {
       message: `${savedProducts.length} product(s) added successfully`,
       data: savedProducts,
     });
-
   } catch (error) {
-    // console.log(error)
     res.status(500).json({ error: error.message });
   }
 };
+
 
 const logout = async (req, res) => {
   try {
