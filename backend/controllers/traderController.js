@@ -264,11 +264,15 @@ const addProduct = async (req, res) => {
     console.log("Body => ", req.body)
     console.log("File => ", req.file)
     let Vehiclephoto = null;
-    if (req.file) {
+
+    const v = req.body.deliveryWay 
+
+    if ( v === "delivered" && req.file) {
       const uploadResult = await uploadTheImage(req.file.path);
       Vehiclephoto = uploadResult?.secure_url;
       fs.unlinkSync(req.file.path);
     }
+
 
     if (!id) {
       return res.status(403).json({ message: "Trader id is required" });
@@ -279,6 +283,8 @@ const addProduct = async (req, res) => {
     if (id !== trader._id.toString()) {
       return res.status(403).json({ message: "Trader id is not valid" });
     }
+
+ 
 
     let savedProducts = [];
 
@@ -312,8 +318,8 @@ const addProduct = async (req, res) => {
         !totalPrice ||
         !quantity ||
         !BillType ||
-        !vehicleName ||
-        !vehicleNumber ||
+        (v === "delivered" && !vehicleName) ||
+        (v === "delivered" && !vehicleNumber) ||
         !deliveryWay ||
         !paymentStatus
       ) {
