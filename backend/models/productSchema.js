@@ -57,6 +57,7 @@ const productSchema = new mongoose.Schema({
         required: true,
         enum: ["paid", "unpaid"],
         lowercase: true,
+        default: "unpaid"
     },
     BillType: {
         type: String,

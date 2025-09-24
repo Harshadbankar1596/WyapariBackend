@@ -432,7 +432,7 @@ const addProduct = async (req, res) => {
         !traderName ||
         // (!grade && !priceWithoutGrade) ||
         // (!grade && !gradePrice) ||
-        (BillType === "Shimla" ?  !priceWithoutGrade  : !grade || !gradePrice) ||
+        (BillType === "Shimla" ? !priceWithoutGrade : !grade || !gradePrice) ||
         !totalPrice ||
         !quantity ||
         !BillType ||
@@ -576,4 +576,35 @@ const deleteProduct = async (req, res) => {
 }
 
 
-module.exports = { deleteProduct, GetProductsById, GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
+const updatepaymentStatus = async (req, res) => {
+  try {
+
+    const trader = req.trader;
+    const { id } = req.params;
+    const { paymentStatus } = req.body;
+
+    if (!trader) {
+      return res.status(400).json({ message: "Trader invalid" })
+    }
+    if (!id) {
+      return res.status(400).json({ message: "Product id is required" })
+    }
+
+    let product = await Product.findByIdAndUpdate(id, { paymentStatus }, { new: true });
+
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    
+    if (!product) {
+      return res.status(404).json({ message: "Product not found" })
+    }
+    res.status(200).json({ message: "Payment status updated successfully", data: product })
+
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
+
+module.exports = { updatepaymentStatus, deleteProduct, GetProductsById, GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
