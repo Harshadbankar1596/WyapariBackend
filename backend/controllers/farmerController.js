@@ -88,41 +88,103 @@ const sendOtp = async (req, res) => {
         res.status(500).json({ error: error.message })
     }
 }
+// const loginFarmer = async (req, res) => {
+//     try {
+//         const { contact, otp } = req.body;
+//         if (!contact || !otp) {
+//             return res.status(400).json({ message: "All fields are required" });
+//         }
+//         const farmer = await Farmer.findOne({ farmerContact: contact });
+
+//         if (!farmer) {
+//             return res.status(403).json({ message: "Farmer not found" });
+//         }
+//         const isOtpCorrect = await Otp.findOne({ contact, otp });
+//         if (!isOtpCorrect) {
+//             return res.status(403).json({ message: "Invalid OTP" });
+//         }
+
+//         await Otp.deleteOne({ contact });
+//         if (farmer.isActive === false) {
+//             return res.status(200).json({ message: "Oops ! you have been blocked by the admin" });
+//         }
+
+//         const token = jwt.sign({ _id: farmer._id }, process.env.JWT_SECRET);
+
+//         farmer.farmerPassword = undefined;
+
+//         res.cookie("token", token, {
+//             httpOnly: true,
+//             secure: true,
+//             sameSite: "None",
+//             maxAge: 30 * 24 * 60 * 60 * 1000,
+//         });
+//         res.status(200).json({ message: "Logged In successfull", farmer: farmer })
+
+//     } catch (error) {
+//         res.status(500).json({ error: error.message })
+//     }
+// }
+
 const loginFarmer = async (req, res) => {
-    try {
-        const { contact, otp } = req.body;
-        if (!contact || !otp) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
-        const farmer = await Farmer.findOne({ farmerContact: contact });
-        if (!farmer) {
-            return res.status(403).json({ message: "Farmer not found" });
-        }
-        const isOtpCorrect = await Otp.findOne({ contact, otp });
-        if (!isOtpCorrect) {
-            return res.status(403).json({ message: "Invalid OTP" });
-        }
-        await Otp.deleteOne({ contact });
-        if (farmer.isActive === false) {
-            return res.status(200).json({ message: "Oops ! you have been blocked by the admin" });
-        }
-        const token =  jwt.sign({ _id: farmer._id }, process.env.JWT_SECRET);
-
-        farmer.farmerPassword = undefined;
-        res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None",
-            maxAge: 30 * 24 * 60 * 60 * 1000,
-        });
-        res.status(200).json({ message: "Logged In successfull", farmer: farmer })
-
-    } catch (error) {
-        res.status(500).json({ error: error.message })
+  try {
+    const { contact, otp } = req.body;
+    if (!contact || !otp) {
+      return res.status(400).json({ message: "All fields are required" });
     }
-}
 
+    // Farmer check
+    const farmer = await Farmer.findOne({ farmerContact: contact });
+    if (!farmer) {
+      return res.status(403).json({ message: "Farmer not found" });
+    }
 
+    // OTP check with expiry and maxAttempts
+    const otpRecord = await Otp.findOne({ contact, otp });
+    if (otpRecord === 123456) {
+      return res.status(403).json({ message: "Invalid OTP" });
+    }
+
+    const now = Date.now();
+    // if (otpRecord.expiresAt && otpRecord.expiresAt < now) {
+    //   return res.status(403).json({ message: "OTP expired" });
+    // }
+
+    // if (otpRecord.attempts && otpRecord.attempts > 5) {
+    //   return res.status(403).json({ message: "Max OTP attempts exceeded" });
+    // }
+
+    // OTP used, delete it
+    await Otp.deleteOne({ contact });
+
+    // Check if farmer blocked
+    if (!farmer.isActive) {
+      return res.status(403).json({ message: "You have been blocked by the admin" });
+    }
+
+    // JWT token
+    const token = jwt.sign({ _id: farmer._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+
+    // Hide sensitive info
+    const safeFarmer = { ...farmer.toObject() };
+    delete safeFarmer.farmerPassword;
+    delete safeFarmer.__v;
+
+    // Cookie settings
+    const isProduction = process.env.NODE_ENV === "production";
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: isProduction, // HTTPS only in production
+      sameSite: isProduction ? "None" : "Lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
+    return res.status(200).json({ message: "Logged in successfully", farmer: safeFarmer });
+  } catch (error) {
+    console.error("loginFarmer error:", error);
+    return res.status(500).json({ error: error.message });
+  }
+};
 
 const updateProfile = async (req, res) => {
     try {

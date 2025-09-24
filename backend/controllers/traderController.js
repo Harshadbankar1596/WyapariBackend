@@ -384,6 +384,8 @@ const addProduct = async (req, res) => {
     console.log("Body Way : ", req.body)
     console.log("File Way : ", req.file)
 
+    // req.file = req.body.vehiclePhoto
+
 
     // trader & id check
     if (!id) {
