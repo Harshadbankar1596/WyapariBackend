@@ -18,7 +18,7 @@ traderRouter.get('/getProducts/:id',authMiddleware, GetProductsById)
 
 traderRouter.delete('/deleteGrade/:gradeId',authMiddleware, deleteGrade)
 traderRouter.patch('/updateGradebyId/:gradeId',authMiddleware, updateGradebyId)
-traderRouter.post('/addProduct/:id',authMiddleware, addProduct)
+traderRouter.post('/addProduct/:id',authMiddleware , upload.single("vehiclePhoto") , addProduct)
 // traderRouter.post('/addProduct/:id', addProduct)
 traderRouter.delete('/deleteProduct/:id',authMiddleware, deleteProduct)
 traderRouter.post('/addVehicle',authMiddleware, addVehicle)

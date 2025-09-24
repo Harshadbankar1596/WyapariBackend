@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema({
         type: String,
     },
     gradePrice: {
-        type : String
+        type: String
     },
     priceWithoutGrade: {
         type: String,
@@ -34,7 +34,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    weight : {
+    weight: {
         type: String,
     },
     deliveryWay: {
@@ -43,11 +43,25 @@ const productSchema = new mongoose.Schema({
         enum: ["delivered", "dropped"],
         lowercase: true,
     },
+    vehicleName: {
+        type: String,
+    },
+    vehicleNumber: {
+        type: String,
+    },
+    vehiclePhoto: {
+        type: String,
+    },
     paymentStatus: {
         type: String,
         required: true,
         enum: ["paid", "unpaid"],
         lowercase: true,
+    },
+    BillType: {
+        type: String,
+        enum: ["G4", "Shimla"],
+        required: true
     },
     traderId: {
         type: mongoose.Schema.Types.ObjectId,

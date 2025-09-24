@@ -110,7 +110,7 @@ const loginTrader = async (req, res) => {
     res
       .cookie("token", token, {
         httpOnly: true,
-        sameSite : "None",
+        sameSite: "None",
         secure: process.env.NODE_ENV === "production",
         maxAge: 30 * 24 * 60 * 60 * 1000
       })
@@ -135,8 +135,6 @@ const updateTrader = async (req, res) => {
     if (req.file) {
       const uploadResult = await uploadTheImage(req.file.path);
       traderProfileImage = uploadResult?.secure_url;
-
-
       fs.unlinkSync(req.file.path);
     }
 
@@ -258,11 +256,19 @@ const updateGradebyId = async (req, res) => {
 const addProduct = async (req, res) => {
 
   try {
-    
+
     const trader = req.trader;
     // console.log("trader : " ,trader)
     const { id } = req.params;
     const products = Array.isArray(req.body) ? req.body : [req.body];
+    console.log("Body => ", req.body)
+    console.log("File => ", req.file)
+    let Vehiclephoto = null;
+    if (req.file) {
+      const uploadResult = await uploadTheImage(req.file.path);
+      Vehiclephoto = uploadResult?.secure_url;
+      fs.unlinkSync(req.file.path);
+    }
 
     if (!id) {
       return res.status(403).json({ message: "Trader id is required" });
@@ -287,6 +293,9 @@ const addProduct = async (req, res) => {
         totalPrice,
         quantity,
         weight,
+        BillType,
+        vehicleName,
+        vehicleNumber,
         farmerContact,
         paymentStatus,
         deliveryWay
@@ -302,6 +311,9 @@ const addProduct = async (req, res) => {
         (grade && !gradePrice) ||
         !totalPrice ||
         !quantity ||
+        !BillType ||
+        !vehicleName ||
+        !vehicleNumber ||
         !deliveryWay ||
         !paymentStatus
       ) {
@@ -331,6 +343,10 @@ const addProduct = async (req, res) => {
         totalPrice,
         quantity,
         weight,
+        BillType,
+        vehicleName,
+        vehicleNumber,
+        vehiclePhoto: Vehiclephoto,
         deliveryWay,
         paymentStatus,
         traderId: trader._id,
@@ -386,7 +402,7 @@ const GetProducts = async (req, res) => {
     if (!trader) {
       return res.status(400).json({ message: "Trader invalid" })
     }
-    
+
     const products = await Product.find();
     res.status(200).json({ message: "Products fetched successfully", data: products });
 
@@ -439,11 +455,11 @@ const deleteProduct = async (req, res) => {
 
     await Product.findByIdAndDelete(id);
     res.status(200).json({ message: "Product deleted successfully" });
-    
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 }
 
 
-module.exports = { deleteProduct , GetProductsById , GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
+module.exports = { deleteProduct, GetProductsById, GetProducts, registerTrader, loginTrader, deleteGrade, updateGradebyId, addProduct, logout, addVehicle, updateTrader, changeTraderPassword, getFarmers, sendOtp };
