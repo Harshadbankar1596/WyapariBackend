@@ -284,7 +284,7 @@ const updateGradebyId = async (req, res) => {
 //       return res.status(403).json({ message: "Trader id is not valid" });
 //     }
 
- 
+
 
 //     let savedProducts = [];
 
@@ -430,14 +430,14 @@ const addProduct = async (req, res) => {
         !farmerName ||
         !farmerContact ||
         !traderName ||
-        (!grade && !priceWithoutGrade) ||
-        (grade && !gradePrice) ||
+        // (!grade && !priceWithoutGrade) ||
+        // (!grade && !gradePrice) ||
+        (BillType === "Shimla" ?  !priceWithoutGrade  : !grade || !gradePrice) ||
         !totalPrice ||
         !quantity ||
         !BillType ||
         !deliveryWay ||
         !paymentStatus ||
-        // ✅ Only check vehicleName & vehicleNumber if deliveryWay == "delivered"
         (deliveryWay === "delivered" && !vehicleName) ||
         (deliveryWay === "delivered" && !vehicleNumber)
       ) {
