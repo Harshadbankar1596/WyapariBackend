@@ -4,8 +4,10 @@ const Farmer = require('../models/farmerSchema')
 const Admin = require('../models/adminSchema');
 
 const authMiddleware = async (req, res, next) => {
+
       console.log("req.body => ", req.body)
       console.log("req.headers => ", req.headers)
+      console.log("req.cookies => ", req.cookies)
 
   try {
     const { token } = req.cookies ? req.cookies : res.Authorization ;
