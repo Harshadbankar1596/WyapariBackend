@@ -13,7 +13,8 @@ const twilio = require('twilio');
 const account_sid = process.env.ACCOUNT_SID
 const auth_token = process.env.AUTH_TOKEN
 const twilioClient = new twilio(account_sid, auth_token)
-const Trader = require('../models/traderSchema')
+const Trader = require('../models/traderSchema');
+const { console } = require('inspector');
 
 
 const registerFarmer = async (req, res) => {
@@ -188,6 +189,8 @@ const loginFarmer = async (req, res) => {
 
 const updateProfile = async (req, res) => {
     try {
+        console.log("req.body", req.body)
+        console.log("req.file", req.file)
         const farmer = req.farmer;
         if (!farmer) {
             return res.status(400).json({ message: "Farmer not valid" })

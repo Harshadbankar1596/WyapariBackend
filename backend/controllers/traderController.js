@@ -196,7 +196,8 @@ const deleteGrade = async (req, res) => {
     const { gradeId } = req.params;
     const trader = req.trader;
     // console.log("trader", trader)
-
+    // console.log("id", gradeId)
+    
     if (!gradeId) {
       return res.status(400).json({ message: "Grade id is required" });
     }
@@ -216,6 +217,8 @@ const deleteGrade = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 const updateGradebyId = async (req, res) => {
   try {
     const { gradeId } = req.params;
