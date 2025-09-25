@@ -387,6 +387,9 @@ const updateGradebyId = async (req, res) => {
       const products = Array.isArray(req.body) ? req.body : [req.body];
       let Vehiclephoto = null;
 
+      console.log(trader);
+      console.log(id);
+
 
       console.log("Body Way : ", req.body)
       console.log("File Way : ", req.file)
