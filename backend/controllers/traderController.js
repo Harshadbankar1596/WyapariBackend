@@ -6,7 +6,7 @@ const Farmer = require('../models/farmerSchema')
 const Product = require('../models/productSchema')
 const fs = require("fs");
 const Otp = require('../models/otpSchema');
-const twilio = require('twilio');
+const twilio = require('twilio'); 
 const uploadTheImage = require("../utils/cloudinary");
 
 const account_sid = process.env.ACCOUNT_SID
@@ -65,18 +65,21 @@ const sendOtp = async (req, res) => {
     const { contact } = req.body;
     // console.log("contact", contact);
     // const otp = String(Math.floor(100000 + Math.random() * 900000));
+
     const otp = 123456
-    await Otp.findOneAndUpdate(
-      { contact },
-      { otp },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
-    )
+
+    // await Otp.findOneAndUpdate(
+    //   { contact },
+    //   { otp },
+    //   { upsert: true, new: true, setDefaultsOnInsert: true }
+    // )
 
     // await twilioClient.messages.create({
     //   body: `Otp - ${otp}`,
     //   from: process.env.PHONE_NUMBER,
     //   to: contact.startsWith('+') ? contact : `+91${contact}`,
-    // })
+    // }) 
+
     res.status(200).json({ message: `Otp - ${otp}` })
   } catch (error) {
     // console.log(error)
@@ -118,6 +121,7 @@ const loginTrader = async (req, res) => {
       .json({
         message: "Trader logged in successfully",
         trader,
+        token : token
       });
 
   } catch (error) {

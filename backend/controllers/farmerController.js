@@ -179,7 +179,7 @@ const loginFarmer = async (req, res) => {
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     });
 
-    return res.status(200).json({ message: "Logged in successfully", farmer: safeFarmer });
+    return res.status(200).json({ message: "Logged in successfully", farmer: safeFarmer , token : token });
   } catch (error) {
     console.error("loginFarmer error:", error);
     return res.status(500).json({ error: error.message });
