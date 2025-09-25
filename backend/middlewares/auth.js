@@ -5,7 +5,7 @@ const Admin = require('../models/adminSchema');
 
 const authMiddleware = async (req, res, next) => {
   try {
-    const { token } = req.cookies;
+    const { token } = req.cookies ? req.cookies : res.Authorization ;
     // console.log("token", token);
 
     if (!token) {
