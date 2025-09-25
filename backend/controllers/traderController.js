@@ -380,114 +380,115 @@ const updateGradebyId = async (req, res) => {
 //   }
 // };
 
-const addProduct = async (req, res) => {
-  try {
-    const trader = req.trader;
-    const { id } = req.params;
-    const products = Array.isArray(req.body) ? req.body : [req.body];
-    let Vehiclephoto = null;
+  const addProduct = async (req, res) => {
+    try {
+      const trader = req.trader;
+      const { id } = req.params;
+      const products = Array.isArray(req.body) ? req.body : [req.body];
+      let Vehiclephoto = null;
 
 
-    console.log("Body Way : ", req.body)
-    console.log("File Way : ", req.file)
+      console.log("Body Way : ", req.body)
+      console.log("File Way : ", req.file)
 
-    // req.file = req.body.vehiclePhoto
+      // req.file = req.body.vehiclePhoto
 
 
-    // trader & id check
-    if (!id) {
-      return res.status(403).json({ message: "Trader id is required" });
-    }
-    if (!trader) {
-      return res.status(402).json({ message: "Trader not found" });
-    }
-    if (id !== trader._id.toString()) {
-      return res.status(403).json({ message: "Trader id is not valid" });
-    }
-
-    let savedProducts = [];
-
-    for (const productData of products) {
-      const {
-        productName,
-        farmerName,
-        traderName,
-        grade,
-        gradePrice,
-        priceWithoutGrade,
-        totalPrice,
-        quantity,
-        weight,
-        BillType,
-        vehicleName,
-        vehicleNumber,
-        farmerContact,
-        paymentStatus,
-        deliveryWay,
-      } = productData;
-
-      // 🔹 Condition: Agar deliveryWay "delivered" hai to hi req.file upload karo
-      if (deliveryWay === "delivered" && req.file) {
-        const uploadResult = await uploadTheImage(req.file.path);
-        Vehiclephoto = uploadResult?.secure_url;
-        fs.unlinkSync(req.file.path);
+      // trader & id check
+      console.log("Trader" , trader)
+      if (!id) {
+        return res.status(403).json({ message: "Trader id is required" });
       }
+      if (!trader) {
+        return res.status(402).json({ message: "Trader not found" });
+      }
+      // if (id.toString() !== trader._id.toString()) {
+      //   return res.status(403).json({ message: "Trader id is not valid" });
+      // }
 
-      // 🔹 Required fields check
-      if (
-        !productName ||
-        !farmerName ||
-        !farmerContact ||
-        !traderName ||
-        // (!grade && !priceWithoutGrade) ||
-        // (!grade && !gradePrice) ||
-        (BillType === "Shimla" ? !priceWithoutGrade : !grade || !gradePrice) ||
-        !totalPrice ||
-        !quantity ||
-        !BillType ||
-        !deliveryWay ||
-        !paymentStatus ||
-        (deliveryWay === "delivered" && !vehicleName) ||
-        (deliveryWay === "delivered" && !vehicleNumber)
-      ) {
-        return res.status(400).json({
-          message: "All required fields must be filled properly",
-          invalidProduct: productData,
+      let savedProducts = [];
+
+      for (const productData of products) {
+        const {
+          productName,
+          farmerName,
+          traderName,
+          grade,
+          gradePrice,
+          priceWithoutGrade,
+          totalPrice,
+          quantity,
+          weight,
+          BillType,
+          vehicleName,
+          vehicleNumber,
+          farmerContact,
+          paymentStatus,
+          deliveryWay,
+        } = productData;
+
+        // 🔹 Condition: Agar deliveryWay "delivered" hai to hi req.file upload karo
+        if (deliveryWay === "delivered" && req.file) {
+          const uploadResult = await uploadTheImage(req.file.path);
+          Vehiclephoto = uploadResult?.secure_url;
+          fs.unlinkSync(req.file.path);
+        }
+
+        // 🔹 Required fields check
+        if (
+          !productName ||
+          !farmerName ||
+          !farmerContact ||
+          !traderName ||
+          // (!grade && !priceWithoutGrade) ||
+          // (!grade && !gradePrice) ||
+          (BillType === "Shimla" ? !priceWithoutGrade : !grade || !gradePrice) ||
+          !totalPrice ||
+          !quantity ||
+          !BillType ||
+          !deliveryWay ||
+          !paymentStatus ||
+          (deliveryWay === "delivered" && !vehicleName) ||
+          (deliveryWay === "delivered" && !vehicleNumber)
+        ) {
+          return res.status(400).json({
+            message: "All required fields must be filled properly",
+            invalidProduct: productData,
+          });
+        }
+
+        const product = new Product({
+          productName,
+          farmerName,
+          farmerContact,
+          traderName,
+          grade,
+          gradePrice,
+          priceWithoutGrade,
+          totalPrice,
+          quantity,
+          weight,
+          BillType,
+          vehicleName: deliveryWay === "delivered" ? vehicleName : null,
+          vehicleNumber: deliveryWay === "delivered" ? vehicleNumber : null,
+          vehiclePhoto: Vehiclephoto,
+          deliveryWay,
+          paymentStatus,
+          traderId: trader._id,
         });
+
+        const addedProduct = await product.save();
+        savedProducts.push(addedProduct);
       }
 
-      const product = new Product({
-        productName,
-        farmerName,
-        farmerContact,
-        traderName,
-        grade,
-        gradePrice,
-        priceWithoutGrade,
-        totalPrice,
-        quantity,
-        weight,
-        BillType,
-        vehicleName: deliveryWay === "delivered" ? vehicleName : null,
-        vehicleNumber: deliveryWay === "delivered" ? vehicleNumber : null,
-        vehiclePhoto: Vehiclephoto,
-        deliveryWay,
-        paymentStatus,
-        traderId: trader._id,
+      res.status(200).json({
+        message: `${savedProducts.length} product(s) added successfully`,
+        data: savedProducts,
       });
-
-      const addedProduct = await product.save();
-      savedProducts.push(addedProduct);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-
-    res.status(200).json({
-      message: `${savedProducts.length} product(s) added successfully`,
-      data: savedProducts,
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
+  };
 
 
 const logout = async (req, res) => {
