@@ -381,7 +381,6 @@ const updateGradebyId = async (req, res) => {
 // };
 
   const addProduct = async (req, res) => {
-    console.log("res => ", req)
     try {
       const trader = req.trader;
       const { id } = req.params;
